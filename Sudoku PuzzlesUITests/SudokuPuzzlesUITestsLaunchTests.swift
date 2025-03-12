@@ -1,5 +1,5 @@
 //
-//  Sudoku_PuzzlesUITestsLaunchTests.swift
+//  SudokuPuzzlesUITestsLaunchTests.swift
 //  Sudoku PuzzlesUITests
 //
 //  Created by ian on 09/03/2025.
@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class Sudoku_PuzzlesUITestsLaunchTests: XCTestCase {
+final class SudokuPuzzlesUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

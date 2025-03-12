@@ -1,5 +1,5 @@
 //
-//  Sudoku_PuzzlesApp.swift
+//  SudokuPuzzlesApp.swift
 //  Sudoku Puzzles
 //
 //  Created by ian on 09/03/2025.
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct Sudoku_PuzzlesApp: App {
+struct SudokuPuzzlesApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,7 +25,8 @@ struct Sudoku_PuzzlesApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ContentView()
+            SudokuBoardView()
         }
         .modelContainer(sharedModelContainer)
     }
