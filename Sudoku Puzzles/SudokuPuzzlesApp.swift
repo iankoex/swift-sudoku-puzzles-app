@@ -10,6 +10,7 @@ import SwiftData
 
 @main
 struct SudokuPuzzlesApp: App {
+    @State private var appService: AppService = AppService()
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -27,6 +28,7 @@ struct SudokuPuzzlesApp: App {
         WindowGroup {
 //            ContentView()
             SudokuBoardView()
+                .environment(appService)
         }
         .modelContainer(sharedModelContainer)
     }

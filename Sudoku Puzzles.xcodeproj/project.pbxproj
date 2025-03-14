@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3CC117402D820EA5003785A1 /* SudukoEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 3CC1173F2D820EA5003785A1 /* SudukoEngine */; };
+		3CC1176F2D821DE3003785A1 /* SudukoEngine in Frameworks */ = {isa = PBXBuildFile; productRef = 3CC1176E2D821DE3003785A1 /* SudukoEngine */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CC117402D820EA5003785A1 /* SudukoEngine in Frameworks */,
+				3CC1176F2D821DE3003785A1 /* SudukoEngine in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,6 +133,7 @@
 			name = "Sudoku Puzzles";
 			packageProductDependencies = (
 				3CC1173F2D820EA5003785A1 /* SudukoEngine */,
+				3CC1176E2D821DE3003785A1 /* SudukoEngine */,
 			);
 			productName = "Sudoku Puzzles";
 			productReference = 3CAC9F042D7E2BD900CFB79F /* Sudoku Puzzles.app */;
@@ -215,7 +218,7 @@
 			mainGroup = 3CAC9EFB2D7E2BD900CFB79F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				3CC1173E2D820EA5003785A1 /* XCLocalSwiftPackageReference "../swift-suduko-engine" */,
+				3CC1176D2D821DE3003785A1 /* XCLocalSwiftPackageReference "../swift-sudoko-engine" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3CAC9F052D7E2BD900CFB79F /* Products */;
@@ -325,7 +328,9 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_SUPPRESS_WARNINGS = NO;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
@@ -365,7 +370,9 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_SUPPRESS_WARNINGS = NO;
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
@@ -429,6 +436,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Debug;
 		};
@@ -482,6 +490,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Release;
 		};
@@ -617,14 +626,18 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		3CC1173E2D820EA5003785A1 /* XCLocalSwiftPackageReference "../swift-suduko-engine" */ = {
+		3CC1176D2D821DE3003785A1 /* XCLocalSwiftPackageReference "../swift-sudoko-engine" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../swift-suduko-engine";
+			relativePath = "../swift-sudoko-engine";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		3CC1173F2D820EA5003785A1 /* SudukoEngine */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SudukoEngine;
+		};
+		3CC1176E2D821DE3003785A1 /* SudukoEngine */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SudukoEngine;
 		};
