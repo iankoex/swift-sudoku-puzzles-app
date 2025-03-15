@@ -13,25 +13,37 @@ struct SudokuBoardView: View {
     @State private var gameService: GameService = GameService()
 
     var body: some View {
-        VStack {
-            Text(
-                "grid: \(gameService.selectedGridIdetifier), cell: \(gameService.selectedCell?.id ?? "")"
-            )
+        ScrollView {
+            VStack {
+                Text(
+                    "grid: \(gameService.selectedGridIdetifier), cell: \(gameService.selectedCell?.id ?? "")"
+                )
 
-            LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
-                ForEach(gameService.sudoku.grid) { grid in
-                    SudokuGridView(grid: grid)
+                LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
+                    ForEach(gameService.sudoku.grid) { grid in
+                        SudokuGridView(grid: grid)
+                    }
                 }
+                .border(Color.gray, width: 4)
+                .aspectRatio(1, contentMode: .fit)
+                .focusable()
+                .focusEffectDisabled()
+                .onKeyPress(characters: .decimalDigits) { key in
+                    let number: Int = Int(key.characters) ?? 0
+                    gameService.updateSelectedCell(with: number)
+                    return .handled
+                }
+
+                BoardNumberPad()
+                    .padding(.vertical)
             }
-            .border(Color.gray, width: 4)
-            .aspectRatio(1, contentMode: .fit)
-            .padding()
-            .task {
-                await gameService.generatePuzzle()
-            }
+            .padding(.horizontal)
         }
         .fontDesign(.monospaced)
         .environment(gameService)
+        .task {
+            await gameService.generatePuzzle()
+        }
     }
 }
 
@@ -53,6 +65,7 @@ struct SudokuGridView: View {
                         if cell.value != 0 {
                             Text("\(cell.value)")
                                 .font(.title)
+                                .foregroundStyle(foregroundColor(for: cell))
                         }
                     }
                     .contentShape(Rectangle())
@@ -63,33 +76,34 @@ struct SudokuGridView: View {
         }
         .border(Color.gray, width: 2)
         .aspectRatio(1, contentMode: .fit)
-        .background(gridBackgroundColor)
-    }
-
-    var gridBackgroundColor: some ShapeStyle {
-        if gameService.selectedGridIdetifier == grid.id {
-            appService.constansts.selectedCellBackgroundColor.tertiary
-        } else {
-            appService.constansts.boardBackgroundColor.tertiary
-        }
     }
 
     func fillColor(for cell: Sudoku.SudokuGrid.Cell) -> any ShapeStyle {
-        guard gameService.selectedCell?.id != cell.id else {
-            return appService.constansts.selectedCellBackgroundColor.tertiary
+        if cell.value != 0 && gameService.selectedCell?.value == cell.value && gameService.invalidCells.contains(where: { $0.id == cell.id }) {
+            return appService.constansts.invalidCellBackgroundColor.tertiary
         }
-        guard gameService.selectedGridIdetifier != grid.id else {
-            return appService.constansts.boardBackgroundColor.tertiary
+        if gameService.selectedCell?.id == cell.id {
+            return appService.constansts.selectedCellBackgroundColor.secondary
+        }
+        if gameService.selectedGridIdetifier == grid.id {
+            return appService.constansts.selectedCellBackgroundColor.tertiary
         }
         return if gameService.selectedCell?.column == cell.column {
             appService.constansts.selectedCellBackgroundColor.tertiary
         } else if gameService.selectedCell?.row == cell.row {
             appService.constansts.selectedCellBackgroundColor.tertiary
-        } else if gameService.selectedCell?.value == cell.value {
+        } else if gameService.selectedCell?.value == cell.value && cell.value != 0 {
             appService.constansts.selectedCellBackgroundColor.tertiary
         } else {
             appService.constansts.boardBackgroundColor.tertiary
         }
+    }
+
+    func foregroundColor(for cell: Sudoku.SudokuGrid.Cell) -> any ShapeStyle {
+        if gameService.immutableCells.contains(where: { $0.id == cell.id }) {
+            return Color.primary
+        }
+        return Color.primary.secondary
     }
 
     func onCellTapped(_ cell: Sudoku.SudokuGrid.Cell) {
@@ -98,6 +112,28 @@ struct SudokuGridView: View {
         }
     }
 }
+
+
+struct BoardNumberPad: View {
+    @Environment(GameService.self) private var gameService: GameService
+
+    var body: some View {
+        HStack {
+            ForEach(1..<10) { number in
+                Button(action: {
+                    gameService.updateSelectedCell(with: number)
+                }) {
+                    Text("\(number)")
+                        .font(.title3)
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+    }
+}
+
 #Preview {
     SudokuBoardView()
+        .environment(AppService())
+        .frame(width: 500, height: 500)
 }
