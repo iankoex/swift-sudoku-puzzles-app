@@ -17,6 +17,7 @@ import SudukoEngine
     var invalidCells: [Sudoku.SudokuGrid.Cell] = []
     var selectedGridIdetifier: Int = 100
     var selectedCell: Sudoku.SudokuGrid.Cell? = nil
+    var inputMode: InputMode = .play
 
     func updateSelectedCell(gridID: Int, cell: Sudoku.SudokuGrid.Cell) {
         selectedGridIdetifier = gridID
@@ -48,5 +49,12 @@ import SudukoEngine
         self.selectedCell = sudoku.grid[gridIndex].cells[cellIndex]
         invalidCells = sudoku.invalidCells()
         // haptic feedback on error
+    }
+}
+
+extension GameService {
+    enum InputMode {
+        case play
+        case notes
     }
 }
