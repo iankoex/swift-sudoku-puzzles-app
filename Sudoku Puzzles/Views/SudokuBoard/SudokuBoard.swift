@@ -12,43 +12,71 @@ struct SudokuBoardView: View {
     let gridItems: [GridItem] = Array(repeating: .init(.flexible(), spacing: 0), count: 3)
     @State private var gameService: GameService = GameService()
 
+    @State private var ok: Bool = true
+
     var body: some View {
         ScrollView {
-            VStack {
-                Text(
-                    "grid: \(gameService.selectedGridIdetifier), cell: \(gameService.selectedCell?.id ?? "")"
-                )
-
-                LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
-                    ForEach(gameService.sudoku.grid) { grid in
-                        SudokuGridView(grid: grid)
-                    }
+            Group {
+                if gameService.isGeneratingNewGame {
+                    contentUnavailableView
+                } else {
+                    boardView
                 }
-                .border(Color.gray, width: 4)
-                .aspectRatio(1, contentMode: .fit)
-                .focusable()
-                .focusEffectDisabled()
-                .onKeyPress(characters: .decimalDigits) { key in
-                    let number: Int = Int(key.characters) ?? 0
-                    gameService.updateSelectedCell(with: number)
-                    return .handled
-                }
-
-                BoardNumberPad()
-                    .padding(.vertical)
             }
             .padding(.horizontal)
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    ActionsMenu()
+                }
                 ToolbarItem(placement: .automatic) {
                     ActionButtons()
                 }
             }
         }
         .fontDesign(.monospaced)
+        .scrollBounceBehavior(.basedOnSize)
         .environment(gameService)
         .task {
-            await gameService.generatePuzzle()
+            print("generate the game better")
+            gameService.generatePuzzle(difficulty: .medium)
         }
+    }
+
+    var boardView: some View {
+        VStack {
+            LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
+                ForEach(gameService.sudoku.grid) { grid in
+                    SudokuGridView(grid: grid)
+                }
+            }
+            .border(Color.gray, width: 4)
+            .aspectRatio(1, contentMode: .fit)
+            .focusable()
+            .focusEffectDisabled()
+            .onKeyPress(characters: .decimalDigits) { key in
+                let number: Int = Int(key.characters) ?? 0
+                gameService.updateSelectedCell(with: number)
+                return .handled
+            }
+
+            BoardNumberPad()
+                .padding(.vertical)
+        }
+    }
+
+    var contentUnavailableView: some View {
+        ContentUnavailableView(
+            label: {
+                Label(title: {
+                    Text("Generating Puzzle ...")
+                }, icon: {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                })
+            }, description: {
+                Text("You will be able to play once the puzzle is generated.")
+            }
+        )
     }
 }
 

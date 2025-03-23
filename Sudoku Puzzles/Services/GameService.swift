@@ -19,19 +19,26 @@ import SudukoEngine
     var selectedCell: Sudoku.SudokuGrid.Cell? = nil
     var inputMode: InputMode = .play
 
+    var isGeneratingNewGame: Bool {
+        return sudoku == .empty
+    }
+
     func updateSelectedCell(gridID: Int, cell: Sudoku.SudokuGrid.Cell) {
         selectedGridIdetifier = gridID
         selectedCell = cell
     }
 
-    func generatePuzzle() async {
-        do {
-            let puzzle = try await SudokuGenerator.generate(difficulty: .easy)
-            sudoku = puzzle.puzzle
-            puzzleSolution = puzzle.solved
-            immutableCells = sudoku.allCells.filter { $0.value != 0}
-        } catch {
-            fatalError("generatePuzzle failed: \(error)")
+    func generatePuzzle(difficulty: Sudoku.Difficulty) {
+        Task {
+            sudoku = .empty
+            do {
+                let puzzle = try await SudokuGenerator.generate(difficulty: difficulty)
+                sudoku = puzzle.puzzle
+                puzzleSolution = puzzle.solved
+                immutableCells = sudoku.allCells.filter { $0.value != 0}
+            } catch {
+                fatalError("generatePuzzle failed: \(error)")
+            }
         }
     }
 

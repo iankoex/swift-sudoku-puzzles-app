@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ActionButtons: View {
+    @Environment(GameService.self) private var gameService: GameService
+
     var body: some View {
         HStack {
             Button("Undo", systemImage: "arrow.uturn.backward.circle") {
@@ -30,5 +32,6 @@ struct ActionButtons: View {
 
             }
         }
+        .disabled(gameService.isGeneratingNewGame)
     }
 }
