@@ -18,6 +18,7 @@ import SudukoEngine
     var selectedGridIdetifier: Int = 100
     var selectedCell: Sudoku.SudokuGrid.Cell? = nil
     var inputMode: InputMode = .play
+    var cellNotes: [CellNote] = []
 
     var isGeneratingNewGame: Bool {
         return sudoku == .empty
@@ -33,16 +34,24 @@ import SudukoEngine
             sudoku = .empty
             do {
                 let puzzle = try await SudokuGenerator.generate(difficulty: difficulty)
-                sudoku = puzzle.puzzle
+                let sudoku = puzzle.puzzle
+                defer {
+                    self.sudoku = sudoku
+                }
                 puzzleSolution = puzzle.solved
                 immutableCells = sudoku.allCells.filter { $0.value != 0}
+                invalidCells = sudoku.invalidCells()
+                cellNotes = []
             } catch {
+                generatePuzzle(difficulty: difficulty)
+                #if DEBUG
                 fatalError("generatePuzzle failed: \(error)")
+                #endif
             }
         }
     }
 
-    func updateSelectedCell(with number: Int) {
+    func updateSelectedCell(with value: Int) {
         guard let selectedCell else { return }
         guard !immutableCells.contains(where: { $0.id == selectedCell.id }) else {
             return
@@ -52,15 +61,41 @@ import SudukoEngine
         guard let cellIndex else {
             return
         }
-        sudoku.grid[gridIndex].cells[cellIndex].value = number
+        if inputMode == .play {
+            cellNotes.removeAll(where: { $0.cellID == selectedCell.id })
+            updateCellValue(gridIndex: gridIndex, cellIndex: cellIndex, value: value)
+        } else if inputMode == .notes {
+            updateCellNotes(selectedCell: selectedCell, value: value)
+        }
+    }
+
+    private func updateCellValue(gridIndex: Int, cellIndex: Int, value: Int) {
+        if sudoku.grid[gridIndex].cells[cellIndex].value == value {
+            sudoku.grid[gridIndex].cells[cellIndex].value = 0
+        } else {
+            sudoku.grid[gridIndex].cells[cellIndex].value = value
+        }
         self.selectedCell = sudoku.grid[gridIndex].cells[cellIndex]
-        invalidCells = sudoku.invalidCells()
+        self.invalidCells = sudoku.invalidCells()
         // haptic feedback on error
+    }
+
+    private func updateCellNotes(selectedCell: Sudoku.SudokuGrid.Cell, value: Int) {
+        if let index = cellNotes.firstIndex(where: { $0.cellID == selectedCell.id }) {
+            if cellNotes[index].values[value] == value {
+                cellNotes[index].values[value] = 0
+            } else {
+                cellNotes[index].values.updateValue(value, forKey: value)
+            }
+        } else {
+            cellNotes.append(CellNote(cellID: selectedCell.id))
+            updateCellNotes(selectedCell: selectedCell, value: value)
+        }
     }
 }
 
 extension GameService {
-    enum InputMode {
+    enum InputMode: Equatable {
         case play
         case notes
     }

@@ -24,9 +24,17 @@ struct ActionButtons: View {
 
             }
 
-            Button("Notes", systemImage: "pencil.line") {
-
+            Button("Notes", systemImage: gameService.inputMode == .play ? "pencil.line" : "pencil.slash") {
+                withAnimation(.spring) {
+                    switch gameService.inputMode {
+                        case .play:
+                            gameService.inputMode = .notes
+                        case .notes:
+                            gameService.inputMode = .play
+                    }
+                }
             }
+            .tint(gameService.inputMode == .play ? .accentColor : .mint)
 
             Button("Hint", systemImage: "lightbulb") {
 
