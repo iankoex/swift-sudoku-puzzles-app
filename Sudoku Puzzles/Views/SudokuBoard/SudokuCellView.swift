@@ -85,6 +85,7 @@ fileprivate struct CellNoteView: View {
                         if let cellNoteValue = cellNote.values[index] {
                             Text("\(cellNoteValue)")
                                 .opacity(cellNoteValue == 0 ? 0 : 1)
+                                .font(.caption2)
                         }
                     }
                 }

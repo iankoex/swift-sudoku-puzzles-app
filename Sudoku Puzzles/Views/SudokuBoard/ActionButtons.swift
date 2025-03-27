@@ -21,7 +21,7 @@ struct ActionButtons: View {
             }
 
             Button("Erase", systemImage: "eraser.line.dashed") {
-
+                gameService.eraseSelectedCell()
             }
 
             Button("Notes", systemImage: gameService.inputMode == .play ? "pencil.line" : "pencil.slash") {
@@ -34,7 +34,7 @@ struct ActionButtons: View {
                     }
                 }
             }
-            .tint(gameService.inputMode == .play ? .accentColor : .mint)
+            .tint(gameService.inputMode == .play ? .accentColor : .green)
 
             Button("Hint", systemImage: "lightbulb") {
 

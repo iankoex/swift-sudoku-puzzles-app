@@ -55,8 +55,26 @@ struct SudokuBoardView: View {
             .focusEffectDisabled()
             .onKeyPress(characters: .decimalDigits) { key in
                 let number: Int = Int(key.characters) ?? 0
-                gameService.updateSelectedCell(with: number)
-                return .handled
+                if gameService.updateSelectedCell(with: number) {
+                    return .handled
+                }
+                return .ignored
+            }
+//            .onModifierKeysChanged(mask: .option) { old, new in
+//                if new.isEmpty {
+//                    // Option key released
+//                    gameService.inputMode = .play
+//                } else {
+//                    // Option key pressed
+//                    gameService.inputMode = .notes
+//                }
+//            }
+            .onKeyPress(characters: [UnicodeScalar(127), UnicodeScalar(8)]) { _ in
+                print("Unicode Scalers need investigation, especially for delete key")
+                if gameService.eraseSelectedCell() {
+                    return .handled
+                }
+                return .ignored
             }
 
             BoardNumberPad()

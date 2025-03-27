@@ -51,15 +51,10 @@ import SudukoEngine
         }
     }
 
-    func updateSelectedCell(with value: Int) {
-        guard let selectedCell else { return }
-        guard !immutableCells.contains(where: { $0.id == selectedCell.id }) else {
-            return
-        }
-        let gridIndex = selectedGridIdetifier - 1
-        let cellIndex = sudoku.grid[gridIndex].cells.firstIndex(where: { $0.id == selectedCell.id })
-        guard let cellIndex else {
-            return
+    @discardableResult
+    func updateSelectedCell(with value: Int) -> Bool {
+        guard let (selectedCell, gridIndex, cellIndex) = selectedCellIndicies() else {
+            return false
         }
         if inputMode == .play {
             cellNotes.removeAll(where: { $0.cellID == selectedCell.id })
@@ -67,6 +62,20 @@ import SudukoEngine
         } else if inputMode == .notes {
             updateCellNotes(selectedCell: selectedCell, value: value)
         }
+        return true
+    }
+
+    private func selectedCellIndicies() -> (selectedCell: Sudoku.SudokuGrid.Cell, gridIndex: Int, cellIndex: Int)? {
+        guard let selectedCell else { return nil }
+        guard !immutableCells.contains(where: { $0.id == selectedCell.id }) else {
+            return nil
+        }
+        let gridIndex = selectedGridIdetifier - 1
+        let cellIndex = sudoku.grid[gridIndex].cells.firstIndex(where: { $0.id == selectedCell.id })
+        guard let cellIndex else {
+            return nil
+        }
+        return (selectedCell, gridIndex, cellIndex)
     }
 
     private func updateCellValue(gridIndex: Int, cellIndex: Int, value: Int) {
@@ -91,6 +100,16 @@ import SudukoEngine
             cellNotes.append(CellNote(cellID: selectedCell.id))
             updateCellNotes(selectedCell: selectedCell, value: value)
         }
+    }
+
+    @discardableResult
+    func eraseSelectedCell() -> Bool {
+        guard let (selectedCell, gridIndex, cellIndex) = selectedCellIndicies() else {
+            return false
+        }
+        updateCellValue(gridIndex: gridIndex, cellIndex: cellIndex, value: 0)
+        cellNotes.removeAll(where: { $0.cellID == selectedCell.id })
+        return true
     }
 }
 
