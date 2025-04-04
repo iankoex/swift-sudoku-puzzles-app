@@ -13,12 +13,14 @@ struct ActionButtons: View {
     var body: some View {
         HStack {
             Button("Undo", systemImage: "arrow.uturn.backward.circle") {
-
+                gameService.undo()
             }
+            .disabled(!gameService.canUndo)
 
             Button("Redo", systemImage: "arrow.uturn.right.circle") {
-
+                gameService.redo()
             }
+            .disabled(!gameService.canRedo)
 
             Button("Erase", systemImage: "eraser.line.dashed") {
                 gameService.eraseSelectedCell()

@@ -11,8 +11,7 @@ import SudukoEngine
 struct SudokuBoardView: View {
     let gridItems: [GridItem] = Array(repeating: .init(.flexible(), spacing: 0), count: 3)
     @State private var gameService: GameService = GameService()
-
-    @State private var ok: Bool = true
+    @Environment(\.undoManager) var undoManager
 
     var body: some View {
         ScrollView {
@@ -37,6 +36,9 @@ struct SudokuBoardView: View {
         .scrollBounceBehavior(.basedOnSize)
         .environment(gameService)
         .task {
+            if let undoManager {
+                gameService.undoManager = undoManager
+            }
             print("generate the game better")
             gameService.generatePuzzle(difficulty: .medium)
         }
