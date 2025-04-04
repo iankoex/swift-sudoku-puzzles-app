@@ -13,7 +13,7 @@ struct ActionsMenu: View {
     
     var body: some View {
         Menu("Actions", systemImage: "ellipsis.circle") {
-            Menu("New Game", systemImage: "plus") {
+            Section("New Game") {
                 ForEach(Sudoku.Difficulty.allCases) { difficulty in
                     Button(difficulty.description) {
                         gameService.generatePuzzle(difficulty: difficulty)

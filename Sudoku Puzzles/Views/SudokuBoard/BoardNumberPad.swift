@@ -14,18 +14,29 @@ struct BoardNumberPad: View {
     var body: some View {
         HStack {
             ForEach(1..<10) { number in
-                Button(action: {
-                    gameService.updateSelectedCell(with: number)
-                }) {
-                    Text("\(number)")
-                }
-                .font(.title)
-                .buttonStyle(.borderless)
-                .padding(.horizontal, 5)
-                .padding(5)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 5))
-//                .hoverEffect(.lift)
+                boardButton(for: number)
             }
         }
+    }
+
+    func boardButton(for number: Int) -> some View {
+        Button(action: {
+            gameService.updateSelectedCell(with: number)
+        }) {
+            Text("\(number)")
+        }
+        .font(.title)
+        .buttonStyle(.borderless)
+        .padding(.horizontal, 5)
+        .padding(5)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 5))
+        .disabled(boardButtonDisabled(number))
+    }
+
+    func boardButtonDisabled(_ number: Int) -> Bool {
+        guard gameService.inputMode == .play else {
+            return false
+        }
+        return !gameService.availableCellsForInput.contains(number)
     }
 }

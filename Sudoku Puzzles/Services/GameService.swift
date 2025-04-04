@@ -19,6 +19,7 @@ import SudukoEngine
     var selectedCell: Sudoku.SudokuGrid.Cell? = nil
     var inputMode: InputMode = .play
     var cellNotes: [CellNote] = []
+    var availableCellsForInput: [Int] = []
 
     var isGeneratingNewGame: Bool {
         return sudoku == .empty
@@ -41,7 +42,10 @@ import SudukoEngine
                 puzzleSolution = puzzle.solved
                 immutableCells = sudoku.allCells.filter { $0.value != 0}
                 invalidCells = sudoku.invalidCells()
+                // reset the board
                 cellNotes = []
+                availableCellsForInput = Array(1...9)
+                selectedCell = nil
             } catch {
                 generatePuzzle(difficulty: difficulty)
                 #if DEBUG
@@ -59,6 +63,7 @@ import SudukoEngine
         if inputMode == .play {
             cellNotes.removeAll(where: { $0.cellID == selectedCell.id })
             updateCellValue(gridIndex: gridIndex, cellIndex: cellIndex, value: value)
+            availableCellsForInput = SudokuGenerator.getAvailableNumbers(from: sudoku, using: puzzleSolution)
         } else if inputMode == .notes {
             updateCellNotes(selectedCell: selectedCell, value: value)
         }
