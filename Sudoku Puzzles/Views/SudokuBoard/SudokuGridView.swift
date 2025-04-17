@@ -21,7 +21,7 @@ struct SudokuGridView: View {
                 SudokuCellView(grid: grid, cell: cell)
             }
         }
-        .border(Color.gray, width: 2)
+        .border(Color.gray.opacity(0.5), width: 2)
         .aspectRatio(1, contentMode: .fit)
     }
 }

@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import SudukoEngine
+import Combine
 
 @Observable
 class GameService {
@@ -21,6 +22,9 @@ class GameService {
     var inputMode: InputMode = .play
     var cellNotes: [CellNote] = []
     var availableCellsForInput: [Int] = []
+    var timeElapsed: Int = 0
+    var isGameRunning: Bool = false
+    private var timer: AnyCancellable?
 
     var isGeneratingNewGame: Bool {
         return sudoku == .empty
@@ -53,6 +57,7 @@ class GameService {
                 availableCellsForInput = Array(1...9)
                 selectedCell = nil
                 selectedGridIdetifier = 0
+                startTimer(from: 0)
                 // Clear undo stack for a new game.
                 undoManager.removeAllActions()
             } catch {
@@ -224,6 +229,36 @@ class GameService {
     func redo() {
         if canRedo {
             undoManager.redo()
+        }
+    }
+
+    func startTimer(from seconds: Int = 0) {
+        timeElapsed = seconds
+        isGameRunning = true
+        timer = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                guard let self = self, self.isGameRunning else { return }
+                self.timeElapsed += 1
+            }
+    }
+
+    func pauseTimer() {
+        isGameRunning = false
+        timer?.cancel()
+    }
+
+    func resetTimer() {
+        isGameRunning = false
+        timer?.cancel()
+        timeElapsed = 0
+    }
+
+    func toggleGameState() {
+        if isGameRunning {
+            pauseTimer()
+        } else {
+            startTimer(from: timeElapsed)
         }
     }
 }

@@ -18,7 +18,7 @@ struct SudokuCellView: View {
     var body: some View {
         Rectangle()
             .fill(AnyShapeStyle(fillColor(for: cell)))
-            .border(Color.gray.secondary, width: 1)
+            .border(Color.gray.quinary, width: 1)
             .aspectRatio(1, contentMode: .fit)
             .overlay(alignment: .center) {
                 if cell.value != 0 {

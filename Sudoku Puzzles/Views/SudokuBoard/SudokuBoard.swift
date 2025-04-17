@@ -12,6 +12,7 @@ struct SudokuBoardView: View {
     let gridItems: [GridItem] = Array(repeating: .init(.flexible(), spacing: 0), count: 3)
     @State private var gameService: GameService = GameService()
     @Environment(\.undoManager) var undoManager
+    let namespace: Namespace = Namespace()
 
     var body: some View {
         ScrollView {
@@ -46,42 +47,79 @@ struct SudokuBoardView: View {
 
     var boardView: some View {
         VStack {
-            LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
-                ForEach(gameService.sudoku.grid) { grid in
-                    SudokuGridView(grid: grid)
+            BoardHeader(namespace: namespace)
+            
+            Group {
+                LazyVGrid(columns: gridItems, alignment: .center, spacing: 0) {
+                    ForEach(gameService.sudoku.grid) { grid in
+                        SudokuGridView(grid: grid)
+                    }
                 }
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(Color.gray.opacity(0.7), lineWidth: 4)
+                }
+                .aspectRatio(1, contentMode: .fit)
+                .focusable()
+                .focusEffectDisabled()
+                .scaleEffect(gameService.isGameRunning ? 1 : 0.95)
+                .blur(radius: gameService.isGameRunning ? 0 : 5)
+
+                .onKeyPress(characters: .decimalDigits) { key in
+                    let number: Int = Int(key.characters) ?? 0
+                    if gameService.updateSelectedCell(with: number) {
+                        return .handled
+                    }
+                    return .ignored
+                }
+                //            .onModifierKeysChanged(mask: .option) { old, new in
+                //                if new.isEmpty {
+                //                    // Option key released
+                //                    gameService.inputMode = .play
+                //                } else {
+                //                    // Option key pressed
+                //                    gameService.inputMode = .notes
+                //                }
+                //            }
+                .onKeyPress(characters: [UnicodeScalar(127), UnicodeScalar(8)]) { _ in
+                    print("Unicode Scalers need investigation, especially for delete key")
+                    if gameService.eraseSelectedCell() {
+                        return .handled
+                    }
+                    return .ignored
+                }
+                .disabled(!gameService.isGameRunning)
+                .overlay {
+                    if !gameService.isGameRunning {
+                        continuePlayingButton
+                    }
+                }
+
+                BoardNumberPad()
+                    .padding(.vertical)
+                    .disabled(!gameService.isGameRunning)
             }
-            .border(Color.gray, width: 4)
-            .aspectRatio(1, contentMode: .fit)
-            .focusable()
-            .focusEffectDisabled()
-            .onKeyPress(characters: .decimalDigits) { key in
-                let number: Int = Int(key.characters) ?? 0
-                if gameService.updateSelectedCell(with: number) {
-                    return .handled
+        }
+    }
+
+    var continuePlayingButton: some View {
+        VStack {
+            TimerView(namespace: namespace)
+            Button("play", systemImage: "play") {
+                withAnimation(.snappy) {
+                    gameService.toggleGameState()
                 }
-                return .ignored
-            }
-//            .onModifierKeysChanged(mask: .option) { old, new in
-//                if new.isEmpty {
-//                    // Option key released
-//                    gameService.inputMode = .play
-//                } else {
-//                    // Option key pressed
-//                    gameService.inputMode = .notes
-//                }
-//            }
-            .onKeyPress(characters: [UnicodeScalar(127), UnicodeScalar(8)]) { _ in
-                print("Unicode Scalers need investigation, especially for delete key")
-                if gameService.eraseSelectedCell() {
-                    return .handled
-                }
-                return .ignored
             }
 
-            BoardNumberPad()
-                .padding(.vertical)
+
         }
+        .buttonStyle(.plain)
+        .labelStyle(.iconOnly)
+        .font(.largeTitle)
+        .padding()
+        .contentShape(Circle())
+        .foregroundStyle(.gray)
     }
 
     var contentUnavailableView: some View {
