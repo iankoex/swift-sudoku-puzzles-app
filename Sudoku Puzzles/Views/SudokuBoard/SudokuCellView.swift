@@ -36,6 +36,9 @@ struct SudokuCellView: View {
     }
 
     func fillColor(for cell: Sudoku.SudokuGrid.Cell) -> any ShapeStyle {
+        guard gameService.isGameRunning else {
+            return appService.constansts.boardBackgroundColor.tertiary
+        }
         if cell.value != 0 && gameService.selectedCell?.value == cell.value &&
             gameService.invalidCells.contains(where: { $0.id == cell.id }) {
             return appService.constansts.invalidCellBackgroundColor.tertiary

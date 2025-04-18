@@ -12,6 +12,7 @@ struct SudokuBoardView: View {
     let gridItems: [GridItem] = Array(repeating: .init(.flexible(), spacing: 0), count: 3)
     @State private var gameService: GameService = GameService()
     @Environment(\.undoManager) var undoManager
+    @Environment(\.scenePhase) var scenePhase
     let namespace: Namespace = Namespace()
 
     var body: some View {
@@ -43,6 +44,9 @@ struct SudokuBoardView: View {
             print("generate the game better")
             gameService.generatePuzzle(difficulty: .medium)
         }
+        .onChange(of: scenePhase) { _, state in
+            gameService.changeGameStateUsingPhase(state)
+        }
     }
 
     var boardView: some View {
@@ -65,7 +69,6 @@ struct SudokuBoardView: View {
                 .focusEffectDisabled()
                 .scaleEffect(gameService.isGameRunning ? 1 : 0.95)
                 .blur(radius: gameService.isGameRunning ? 0 : 5)
-
                 .onKeyPress(characters: .decimalDigits) { key in
                     let number: Int = Int(key.characters) ?? 0
                     if gameService.updateSelectedCell(with: number) {
@@ -107,19 +110,17 @@ struct SudokuBoardView: View {
         VStack {
             TimerView(namespace: namespace)
             Button("play", systemImage: "play") {
-                withAnimation(.snappy) {
-                    gameService.toggleGameState()
-                }
+                gameService.toggleGameState()
             }
-
-
         }
         .buttonStyle(.plain)
         .labelStyle(.iconOnly)
         .font(.largeTitle)
-        .padding()
-        .contentShape(Circle())
         .foregroundStyle(.gray)
+        .padding()
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
+        .shadow(radius: 4)
+        .transition(.scale)
     }
 
     var contentUnavailableView: some View {

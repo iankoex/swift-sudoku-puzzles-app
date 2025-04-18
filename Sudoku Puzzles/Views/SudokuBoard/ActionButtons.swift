@@ -42,6 +42,6 @@ struct ActionButtons: View {
 
             }
         }
-        .disabled(gameService.isGeneratingNewGame)
+        .disabled(gameService.isGeneratingNewGame || !gameService.isGameRunning)
     }
 }

@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import SudukoEngine
 import Combine
+import SwiftUI
 
 @Observable
 class GameService {
@@ -25,6 +26,7 @@ class GameService {
     var timeElapsed: Int = 0
     var isGameRunning: Bool = false
     private var timer: AnyCancellable?
+    private var lastGameStateIsRunnig: Bool? = nil
 
     var isGeneratingNewGame: Bool {
         return sudoku == .empty
@@ -255,10 +257,25 @@ class GameService {
     }
 
     func toggleGameState() {
-        if isGameRunning {
-            pauseTimer()
+        withAnimation(.snappy) {
+            if isGameRunning {
+                pauseTimer()
+            } else {
+                startTimer(from: timeElapsed)
+            }
+        }
+    }
+
+    func changeGameStateUsingPhase(_ state: ScenePhase) {
+        if lastGameStateIsRunnig != nil {
+            lastGameStateIsRunnig = isGameRunning
+        }
+        if state == .active {
+            if let lastGameStateIsRunnig, lastGameStateIsRunnig {
+                startTimer(from: timeElapsed)
+            }
         } else {
-            startTimer(from: timeElapsed)
+            pauseTimer()
         }
     }
 }

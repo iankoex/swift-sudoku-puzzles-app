@@ -22,11 +22,8 @@ struct BoardHeader: View {
                     .font(.caption)
             }
 
-
             Button("pause game", systemImage: "pause.circle") {
-                withAnimation(.snappy) {
-                    gameService.toggleGameState()
-                }
+                gameService.toggleGameState()
             }
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
@@ -58,5 +55,4 @@ struct TimerView: View {
         }
         .matchedGeometryEffect(id: "timer.view", in: namespace.wrappedValue)
     }
-
 }
