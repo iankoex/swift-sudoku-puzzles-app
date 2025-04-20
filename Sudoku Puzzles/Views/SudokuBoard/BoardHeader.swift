@@ -13,9 +13,16 @@ struct BoardHeader: View {
 
     var body: some View {
         HStack {
+            VStack(alignment: .leading) {
+                Text("Difficulty")
+                    .font(.caption2)
+                Text(gameService.sudoku.difficulty.description)
+                    .font(.caption)
+            }
+
             Spacer()
 
-            VStack {
+            VStack(alignment: .leading) {
                 Text("Time")
                     .font(.caption2)
                 TimerView(namespace: namespace)
@@ -28,6 +35,9 @@ struct BoardHeader: View {
             .labelStyle(.iconOnly)
             .buttonStyle(.borderless)
             .font(.title)
+        }
+        .overlay {
+
         }
     }
 }
