@@ -104,6 +104,12 @@ struct SudokuBoardView: View {
                     .disabled(!gameService.isGameRunning)
             }
         }
+        .sensoryFeedback(.error, trigger: gameService.invalidCells) { oldValue, newValue in
+            gameService.feedbackForInvalidCells(oldValue, newValue)
+        }
+        .sensoryFeedback(.success, trigger: gameService.sudoku) { oldValue, newValue in
+            gameService.feedbackForCorectInput(oldValue, newValue)
+        }
     }
 
     var continuePlayingButton: some View {

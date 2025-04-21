@@ -25,7 +25,7 @@ struct BoardNumberPad: View {
         }) {
             Text("\(number)")
         }
-        .font(.title)
+        .font(.title2)
         .buttonStyle(.borderless)
         .padding(.horizontal, 5)
         .padding(5)
