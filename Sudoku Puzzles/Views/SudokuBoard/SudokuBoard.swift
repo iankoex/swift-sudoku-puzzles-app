@@ -32,6 +32,9 @@ struct SudokuBoardView: View {
         .onChange(of: scenePhase) { _, state in
             gameService.changeGameStateUsingPhase(state)
         }
+        .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+            gameService.updateTimeElapsed()
+        }
         #if os(macOS)
         .frame(minHeight: 500)
         #endif

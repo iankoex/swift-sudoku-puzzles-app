@@ -8,7 +8,6 @@
 import Foundation
 import Observation
 import SudukoEngine
-import Combine
 import SwiftUI
 
 /// A service class that manages the state and logic of a Sudoku game.
@@ -52,9 +51,6 @@ class GameService {
 
     /// A boolean indicating whether the game is currently running.
     var isGameRunning: Bool = false
-
-    /// A cancellable for the timer publisher.
-    private var timer: AnyCancellable?
 
     /// The last known state of the game (running or not).
     private var lastGameStateIsRunnig: Bool? = nil
@@ -300,25 +296,22 @@ class GameService {
         timeElapsed = seconds
         isGameRunning = true
         lastGameStateIsRunnig = nil
-        timer = Timer.publish(every: 1, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                guard let self = self, self.isGameRunning else { return }
-                self.timeElapsed += 1
-            }
     }
 
     /// Pauses the game timer.
-    func pauseTimer() {
+    private func pauseTimer() {
         isGameRunning = false
-        timer?.cancel()
-        timer = nil
     }
 
     /// Resets the game timer to zero.
-    func resetTimer() {
+    private func resetTimer() {
         pauseTimer()
         timeElapsed = 0
+    }
+
+    func updateTimeElapsed() {
+        guard isGameRunning else { return }
+        self.timeElapsed += 1
     }
 
     /// Toggles the game state between running and paused.
