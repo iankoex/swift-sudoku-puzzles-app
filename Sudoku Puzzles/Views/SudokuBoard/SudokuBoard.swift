@@ -17,22 +17,7 @@ struct SudokuBoardView: View {
 
     var body: some View {
         ScrollView {
-            Group {
-                if gameService.isGeneratingNewGame {
-                    contentUnavailableView
-                } else {
-                    boardView
-                }
-            }
-            .padding(.horizontal)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    ActionsMenu()
-                }
-                ToolbarItem(placement: .automatic) {
-                    ActionButtons()
-                }
-            }
+            content
         }
         .fontDesign(.monospaced)
         .scrollBounceBehavior(.basedOnSize)
@@ -47,6 +32,31 @@ struct SudokuBoardView: View {
         .onChange(of: scenePhase) { _, state in
             gameService.changeGameStateUsingPhase(state)
         }
+        #if os(macOS)
+        .frame(minHeight: 500)
+        #endif
+    }
+
+    var content: some View {
+        Group {
+            if gameService.isGeneratingNewGame {
+                contentUnavailableView
+            } else {
+                boardView
+                    .padding(.top, 5)
+                    .fixedSize()
+            }
+        }
+        .padding(.horizontal)
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                ActionsMenu()
+            }
+            ToolbarItem(placement: .automatic) {
+                ActionButtons()
+            }
+        }
+        .toolbarRole(.editor)
     }
 
     var boardView: some View {

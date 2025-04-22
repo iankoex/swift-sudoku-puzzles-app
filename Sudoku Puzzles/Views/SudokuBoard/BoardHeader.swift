@@ -58,9 +58,7 @@ struct TimerView: View {
         VStack {
             Text(String(format: "%02d:%02d", minutes, seconds))
                 .contentTransition(.numericText())
-                .transaction { t in
-                    t.animation = .default
-                }
+//                .animation(.snappy, value: gameService.timeElapsed) // causes high CPU Usage
                 .monospaced()
         }
         .matchedGeometryEffect(id: "timer.view", in: namespace.wrappedValue)
