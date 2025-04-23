@@ -29,7 +29,7 @@ struct BoardHeader: View {
                     .font(.caption)
             }
 
-            Button("pause game", systemImage: "pause.circle") {
+            Button("pause game", systemImage: gameService.isGameRunning ? "pause.circle" : "play.circle") {
                 gameService.toggleGameState()
             }
             .labelStyle(.iconOnly)
@@ -37,7 +37,7 @@ struct BoardHeader: View {
             .font(.title)
         }
         .overlay {
-
+            // Mistakes View 
         }
     }
 }

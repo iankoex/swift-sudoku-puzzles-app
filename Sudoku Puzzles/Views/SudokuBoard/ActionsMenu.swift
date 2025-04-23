@@ -23,7 +23,12 @@ struct ActionsMenu: View {
             .disabled(gameService.isGeneratingNewGame)
 
             Button("Settings", systemImage: "gear") {
-
+                /*
+                 Board Colors
+                 haptics enabled?
+                 mistakes counter
+                 
+                 */
             }
         }
     }
